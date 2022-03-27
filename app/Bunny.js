@@ -1,16 +1,19 @@
 import {PrototypeChain} from "../engine3/PrototypeChain";
-import * as THREE from "three";
 
 const Bunny = PrototypeChain.createScript('Bunny');
-Bunny.loadModel('./../assets/bunny.drc', PrototypeChain.scene);
+Bunny.loadModel('./../assets/bunny.drc');
 
-// Lights
-const hemiLight = new THREE.HemisphereLight( 0x443333, 0x111122 );
-PrototypeChain.scene.add( hemiLight );
-
-const spotLight = new THREE.SpotLight();
-spotLight.angle = Math.PI / 16;
-spotLight.penumbra = 0.5;
-spotLight.castShadow = true;
-spotLight.position.set( - 1, 1, 1 );
-PrototypeChain.scene.add( spotLight );
+Bunny.start = () => {
+    alert('Chari dike khali wow');
+}
+let i = 0;
+Bunny.update = () => {
+    i += 0.01;
+    Bunny.mesh.position.set(5 * Math.sin(i), 0, 0);
+    let scaleY = Math.sin(i);
+    if(scaleY < 0) { scaleY = -1 * scaleY; }
+    Bunny.mesh.scale.set(5 * Math.sin(i), 5 * scaleY, 5 * Math.sin(i));
+    Bunny.mesh.rotateY(0.1);
+    // console.log(Bunny.mesh.position.x);
+    // console.log(Bunny.mesh.rotation._x);
+}

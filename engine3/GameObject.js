@@ -5,7 +5,7 @@ export class GameObject{
     // Instantiate a loader
     static loader = new DRACOLoader();
 
-    constructor(name, layer = 'default') {
+    constructor(name, scene, layer = 'default') {
         // Naming each game object to identify uniquely
         if (typeof (name) !== 'string') {
             throw Error('expected type string for name');
@@ -16,6 +16,8 @@ export class GameObject{
         }
         this.gameObjectName = name;
         this.layer = layer;
+        this.scene = scene;
+        this.loaded = false;
 
         // Specify path to a folder containing WASM/JS decoding libraries.
         GameObject.loader.setDecoderPath('/engine3/dracodecoder/');
@@ -25,8 +27,7 @@ export class GameObject{
         GameObject.loader.preload();
     }
 
-    loadModel = (url, scene) => {
-        this.mesh = undefined;
+    loadModel = (url) => {
         if (typeof (url) !== 'string') {
             throw Error('expected type string for url');
         }
@@ -38,7 +39,12 @@ export class GameObject{
             (geometry) => {
                 const material = new THREE.MeshBasicMaterial({ color: 0x48C9B0, wireframe: true });
                 // const material = new THREE.MeshStandardMaterial({ color: 0x606060 });
-                scene.add(new THREE.Mesh(geometry, material));
+                this.mesh = new THREE.Mesh(geometry, material);
+                this.scene.add(this.mesh);
+                this.loaded = true;
+                if(typeof(this.start) === 'function'){
+                    this.start();
+                }
                 console.log('loaded : ', {
                     Layer : this.layer,
                     ObjectName : this.gameObjectName

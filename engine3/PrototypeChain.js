@@ -11,8 +11,8 @@ export class PrototypeChain {
         if(typeof(objectName) !== 'string'){
             new Error('string data expected');
         }
-
-        let entity = new GameObject(objectName);
+        
+        let entity = new GameObject(objectName, PrototypeChain.scene);
         PrototypeChain.gameObjects.push(entity);
         return entity;
     }
