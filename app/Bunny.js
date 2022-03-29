@@ -1,7 +1,8 @@
 import {PrototypeChain} from "../engine3/PrototypeChain";
 
 const Bunny = PrototypeChain.createScript('Bunny');
-Bunny.loadModel('./../assets/bunny.drc');
+Bunny.loadModel('https://static.radulescu.me/codepen/fridge/scene.gltf');
+// Bunny.loadModel('./../assets/bunny.drc');
 
 Bunny.start = () => {
     alert('Chari dike khali wow');
@@ -14,6 +15,4 @@ Bunny.update = () => {
     if(scaleY < 0) { scaleY = -1 * scaleY; }
     Bunny.mesh.scale.set(5 * Math.sin(i), 5 * scaleY, 5 * Math.sin(i));
     Bunny.mesh.rotateY(0.1);
-    // console.log(Bunny.mesh.position.x);
-    // console.log(Bunny.mesh.rotation._x);
 }
