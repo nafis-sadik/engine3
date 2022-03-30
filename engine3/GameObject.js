@@ -43,7 +43,7 @@ export class GameObject{
             this.gltfLoader(url);
         }
         else{
-            console.log('Extension ' + extension + ' is not supported');
+            throw Error('Extension ' + extension + ' is not supported');
         }
     }
 
@@ -53,14 +53,30 @@ export class GameObject{
             url,
             // called when the resource is loaded
             (gltf) => {
-                this.mesh = gltf.scene;
-                this.scene.add(gltf.scene);
-                gltf.animations; // Array<THREE.AnimationClip>
+                // Make every part of the models cast shadows
+                gltf.scene.traverse( function( node ) {
+                    if (node instanceof THREE.Mesh) { 
+                      node.castShadow = true; 
+                      node.material.side = THREE.DoubleSide;
+                    }
+                });
+                
+                this.scene.add(gltf.scene);                         // Add the mesh to scene
+                this.mesh = gltf.scene;                             // Cache the mesh to let others access
+                this.animations = gltf.animations;                  // Array<THREE.AnimationClip>
+                
+                const mixer = new THREE.AnimationMixer(gltf.scene); // 
+                mixer.clipAction(gltf.animations[1]).play();
+                
                 gltf.scene; // THREE.Group
                 gltf.scenes; // Array<THREE.Group>
                 gltf.cameras; // Array<THREE.Camera>
                 gltf.asset; // Object
                 this.loaded = true;
+
+                if(typeof(this.start) === 'function'){
+                    this.start();
+                }
             },
             // called while loading is progressing
             (xhr) => {

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { PrototypeChain } from './PrototypeChain'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 export default class Program{
     // Only rendering shall start when the application has been created
@@ -7,12 +8,12 @@ export default class Program{
         this.renderer = new THREE.WebGLRenderer({
             canvas: document.querySelector('#app'),
             antialias: true
-        })
+        });
     }
 
     // For each scene, this function must be called once
     // So each scene must have a scene object and a camera to render
-    init = (scene, camera, skyboxUrls) => {
+    init = (scene, camera, skyboxUrls, useOrbitControls = false) => {
         if (!scene instanceof THREE.Scene) {
             throw Error('expected object of type THREE.Scene for scene')
         }
@@ -37,10 +38,22 @@ export default class Program{
             console.log('Reference : https://codepen.io/codypearce/pen/oNXQyOb?editors=0010');
         }
 
-        const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-        this.currentScene.add( directionalLight );
+        if(useOrbitControls){
+            const controls = new OrbitControls(this.mainCam, this.renderer.domElement);
 
-        window.addEventListener( 'resize', this.onWindowResize );
+            // controls.update() must be called after any manual changes to the camera's transform
+            // camera.position.set( 0, 20, 100 );
+            controls.update();
+        }
+
+        const light1 = new THREE.DirectionalLight(0xefefff, 3);
+        light1.position.set(1, 1, 1).normalize();
+        scene.add(light1);
+        const light2 = new THREE.DirectionalLight(0xffefef, 3);
+        light2.position.set(-1, -1, -1).normalize();
+        scene.add(light2);
+
+        window.addEventListener('resize', this.onWindowResize);
 
         this.renderer.render(scene, camera);
 

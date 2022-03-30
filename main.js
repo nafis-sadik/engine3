@@ -18,4 +18,4 @@ program.init(currentScene, defaultCam, [
     'https://raw.githubusercontent.com/codypearce/some-skyboxes/master/skyboxes/flame/flame_dn.jpg',
     'https://raw.githubusercontent.com/codypearce/some-skyboxes/master/skyboxes/flame/flame_rt.jpg',
     'https://raw.githubusercontent.com/codypearce/some-skyboxes/master/skyboxes/flame/flame_lf.jpg'
-]);
+], true);
