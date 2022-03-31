@@ -67,6 +67,7 @@ export class GameObject{
                 this.animations = gltf.animations;                  // Array<THREE.AnimationClip>
                 
                 this.mixer = new THREE.AnimationMixer(this.mesh);
+                console.log('Animation reference project : https://codepen.io/b29/pen/MPmqLo');
                 
                 gltf.scene; // THREE.Group
                 gltf.scenes; // Array<THREE.Group>
@@ -124,12 +125,29 @@ export class GameObject{
         );
     }
 
-    setAnimation = (animationClip) => {
+    playAnimation = (animationClip, fadeIn = false) => {
         if(!animationClip instanceof THREE.AnimationClip){
             throw Error('expected object of type THREE.AnimationClip for animationClip')
         }
-        let action = this.mixer.clipAction(animationClip);
-        action.play();
+        
+        this.action = this.mixer.clipAction(animationClip);
+        this.action.play();
+        if(typeof(fadeIn) === 'boolean' && fadeIn === true){
+            this.action.play().fadeIn(1);
+        }else{
+            this.action.play();
+        }
+    }
+
+    stopAnimation = (fadeOut = false) => {
+        if(this.action != undefined){
+            if(typeof(fadeOut) === 'boolean' && fadeOut === true){
+                this.action.stop().fadeOut(1);
+            }
+            else{
+                this.action.stop();
+            }
+        }
     }
 
     animate = (deltaTime) => {

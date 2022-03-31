@@ -36,12 +36,11 @@ export default class Program{
         if(skyboxUrls != undefined){
             const textureCube = new THREE.CubeTextureLoader().load( skyboxUrls );
             this.currentScene.background = textureCube;
-            console.log('Reference : https://codepen.io/codypearce/pen/oNXQyOb?editors=0010');
+            console.log('Skybox reference project : https://codepen.io/codypearce/pen/oNXQyOb');
         }
 
         if(useOrbitControls){
             const controls = new OrbitControls(this.mainCam, this.renderer.domElement);
-
             // controls.update() must be called after any manual changes to the camera's transform
             // camera.position.set( 0, 20, 100 );
             controls.update();
