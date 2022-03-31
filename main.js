@@ -1,7 +1,6 @@
 import './style.css';
 import * as THREE from 'three';
 import Program from './engine3/Program';
-import { PrototypeChain } from "./engine3/PrototypeChain";
 
 // Start the program
 let program = new Program();

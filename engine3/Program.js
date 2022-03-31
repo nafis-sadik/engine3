@@ -35,6 +35,7 @@ export default class Program{
 
         if(skyboxUrls != undefined){
             const textureCube = new THREE.CubeTextureLoader().load( skyboxUrls );
+            textureCube.encoding = THREE.sRGBEncoding;
             this.currentScene.background = textureCube;
             console.log('Skybox reference project : https://codepen.io/codypearce/pen/oNXQyOb');
         }
