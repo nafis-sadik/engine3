@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { AnimationClip } from 'three';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
@@ -57,7 +58,7 @@ export class GameObject{
                 gltf.scene.traverse( function( node ) {
                     if (node instanceof THREE.Mesh) { 
                       node.castShadow = true; 
-                      node.material.side = THREE.DoubleSide;
+                      node.material.side = THREE.FrontSide;
                     }
                 });
                 
@@ -65,8 +66,7 @@ export class GameObject{
                 this.mesh = gltf.scene;                             // Cache the mesh to let others access
                 this.animations = gltf.animations;                  // Array<THREE.AnimationClip>
                 
-                const mixer = new THREE.AnimationMixer(gltf.scene); // 
-                mixer.clipAction(gltf.animations[1]).play();
+                this.mixer = new THREE.AnimationMixer(this.mesh);
                 
                 gltf.scene; // THREE.Group
                 gltf.scenes; // Array<THREE.Group>
@@ -122,5 +122,17 @@ export class GameObject{
                 console.log(error)
             }
         );
+    }
+
+    setAnimation = (animationClip) => {
+        if(!animationClip instanceof THREE.AnimationClip){
+            throw Error('expected object of type THREE.AnimationClip for animationClip')
+        }
+        let action = this.mixer.clipAction(animationClip);
+        action.play();
+    }
+
+    animate = (deltaTime) => {
+        this.mixer.update(deltaTime);
     }
 }

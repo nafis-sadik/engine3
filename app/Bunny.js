@@ -1,4 +1,3 @@
-import * as THREE from 'three'
 import {PrototypeChain} from "../engine3/PrototypeChain";
 
 const Bunny = PrototypeChain.createScript('Bunny');
@@ -8,13 +7,14 @@ Bunny.loadModel('https://raw.githubusercontent.com/baronwatts/models/master/robb
 
 Bunny.start = () => {
     Bunny.mesh.scale.set(.35,.35,.35);
+    Bunny.setAnimation(Bunny.animations[1]);
     // console.log(mixer.clipAction(Bunny.animations[1]));
     // console.log(Bunny.animations[1]);
     // mixer.clipAction(Bunny.animations[1]).play();
 }
 
 let i = 0;
-Bunny.update = () => {
+Bunny.update = (deltaTime) => {
     i += 0.01;
     // Bunny.mesh.position.set(5 * Math.sin(i), 0, 0);
     let scaleY = Math.sin(i);

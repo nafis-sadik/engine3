@@ -30,7 +30,8 @@ export default class Program{
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.renderer.shadowMap.enabled = true;
-        this.mainCam.position.setZ(5)
+        this.mainCam.position.setZ(5);
+        this.clock = new THREE.Clock();
 
         if(skyboxUrls != undefined){
             const textureCube = new THREE.CubeTextureLoader().load( skyboxUrls );
@@ -70,10 +71,17 @@ export default class Program{
     gameLoop = () => {
         this.renderer.render(this.currentScene, this.mainCam);
         requestAnimationFrame(this.gameLoop);
+        let deltaTime = this.clock.getDelta();
 
         PrototypeChain.gameObjects.forEach(element => {
             if(typeof(element.update) === 'function' && element.loaded == true){
-                element.update();
+                element.update(deltaTime);
+            }
+        });
+
+        PrototypeChain.gameObjects.forEach(element => {
+            if(typeof(element.animate) === 'function' && element.loaded == true){
+                element.animate(deltaTime);
             }
         });
     }
