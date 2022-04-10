@@ -57,8 +57,8 @@ export class GameObject{
                 // Make every part of the models cast shadows
                 gltf.scene.traverse( function( node ) {
                     if (node instanceof THREE.Mesh) { 
-                      node.castShadow = true; 
-                      node.material.side = THREE.FrontSide;
+                        node.castShadow = true; 
+                        node.material.side = THREE.FrontSide;
                     }
                 });
                 
@@ -129,28 +129,29 @@ export class GameObject{
         if(!animationClip instanceof THREE.AnimationClip){
             throw Error('expected object of type THREE.AnimationClip for animationClip')
         }
-        this.action = this.mixer.clipAction(animationClip);
-        console.log(this.action._clip);
-        if(typeof(fadeIn) === 'boolean' && fadeIn === true){
+        if(this.action === undefined)
+            this.action = this.mixer.clipAction(animationClip);
+
+        if (typeof (fadeIn) === 'boolean' && fadeIn === true) {
             this.action.play().fadeIn(1);
         }else{
             this.action.play();
         }
         this.action.loop = loop;
-        // console.log(this.action.loop);
+        this.action.clampWhenFinished = !loop;
     }
 
     stopAnimation = (fadeOut = false) => {
         if(this.action != undefined){
             if(typeof(fadeOut) === 'boolean' && fadeOut === true){
-                this.action.play().fadeOut(1);
+                this.action.fadeOut(1);
+                console.log('stop');
             }
             else{
                 this.action.stop();
             }
+            this.action.reset();
         }
-        console.log(this.action);
-        this.action.reset();
     }
 
     animate = (deltaTime) => {

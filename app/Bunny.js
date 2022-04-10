@@ -2,7 +2,8 @@ import {PrototypeChain} from "../engine3/PrototypeChain";
 
 const Bunny = PrototypeChain.createScript('Bunny');
 // Bunny.loadModel('./../assets/bunny.drc');
-Bunny.loadModel('https://raw.githubusercontent.com/baronwatts/models/master/robber.glb');
+// Bunny.loadModel('https://raw.githubusercontent.com/baronwatts/models/master/robber.glb');
+Bunny.loadModel('./../assets/Soldier.glb');
 
 Bunny.start = () => {
     Bunny.mesh.scale.set(.35,.35,.35);
@@ -12,7 +13,6 @@ Bunny.start = () => {
             Bunny.stopAnimation(true);
         } else {
             let selectedAnimationClip = Math.floor(Math.random() * Bunny.animations.length);
-            console.log(Bunny.animations[selectedAnimationClip].name, 'Selected animation clip');
             Bunny.playAnimation(Bunny.animations[selectedAnimationClip], true, false);
         }
         Bunny.flip=!Bunny.flip;
