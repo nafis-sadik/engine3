@@ -3,15 +3,24 @@ import {PrototypeChain} from "../engine3/PrototypeChain";
 const Bunny = PrototypeChain.createScript('Bunny');
 // Bunny.loadModel('./../assets/bunny.drc');
 Bunny.loadModel('https://raw.githubusercontent.com/baronwatts/models/master/robber.glb');
-// const mixer = new THREE.AnimationMixer(Bunny.mesh);
 
 Bunny.start = () => {
     Bunny.mesh.scale.set(.35,.35,.35);
+    Bunny.flip = false;
     document.body.addEventListener("click", () => {
-        Bunny.stopAnimation(true);
-        Bunny.playAnimation(Bunny.animations[Math.floor(Math.random() * Bunny.animations.length)], true);
-    });
+        if (Bunny.flip) {
+            Bunny.stopAnimation(true);
+        } else {
+            let selectedAnimationClip = Math.floor(Math.random() * Bunny.animations.length);
+            console.log(Bunny.animations[selectedAnimationClip].name, 'Selected animation clip');
+            Bunny.playAnimation(Bunny.animations[selectedAnimationClip], true, false);
+        }
+        Bunny.flip=!Bunny.flip;
+    }, true);
     
+    document.body.addEventListener('contextmenu', (e) => {
+        Bunny.stopAnimation(true);
+    }, true);
     // console.log(mixer.clipAction(Bunny.animations[1]));
     // console.log(Bunny.animations[1]);
     // mixer.clipAction(Bunny.animations[1]).play();
