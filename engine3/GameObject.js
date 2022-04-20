@@ -129,27 +129,31 @@ export class GameObject{
         if(!animationClip instanceof THREE.AnimationClip){
             throw Error('expected object of type THREE.AnimationClip for animationClip')
         }
+
         if(this.action === undefined)
             this.action = this.mixer.clipAction(animationClip);
 
+        console.log(this.action.getClip());
         if (typeof (fadeIn) === 'boolean' && fadeIn === true) {
             this.action.play().fadeIn(1);
-        }else{
+        } else {
             this.action.play();
         }
+
         this.action.loop = loop;
         this.action.clampWhenFinished = !loop;
     }
 
     stopAnimation = (fadeOut = false) => {
         if(this.action != undefined){
-            if(typeof(fadeOut) === 'boolean' && fadeOut === true){
-                this.action.fadeOut(1);
-                console.log('stop');
-            }
-            else{
-                this.action.stop();
-            }
+            // if(typeof(fadeOut) === 'boolean' && fadeOut === true){
+            //     this.action.fadeOut(1);
+            //     console.log('stop');
+            // }
+            // else{
+            //     this.action.stop();
+            // }
+            this.action.stop();
             this.action.reset();
         }
     }

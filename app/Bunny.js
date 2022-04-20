@@ -6,16 +6,16 @@ const Bunny = PrototypeChain.createScript('Bunny');
 Bunny.loadModel('./../assets/Soldier.glb');
 
 Bunny.start = () => {
-    Bunny.mesh.scale.set(.35,.35,.35);
-    Bunny.flip = false;
+    Bunny.mesh.scale.set(1.5, 1.5, 1.5);
+    
     document.body.addEventListener("click", () => {
         if (Bunny.flip) {
-            Bunny.stopAnimation(true);
+            Bunny.playAnimation(Bunny.animations[0], true, false);
         } else {
             let selectedAnimationClip = Math.floor(Math.random() * Bunny.animations.length);
+            if (selectedAnimationClip === 0) { selectedAnimationClip = selectedAnimationClip + 1; }
             Bunny.playAnimation(Bunny.animations[selectedAnimationClip], true, false);
         }
-        Bunny.flip=!Bunny.flip;
     }, true);
     
     document.body.addEventListener('contextmenu', (e) => {
