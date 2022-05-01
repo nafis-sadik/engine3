@@ -74,14 +74,14 @@ export default class Program{
         let deltaTime = this.clock.getDelta();
 
         PrototypeChain.gameObjects.forEach(element => {
-            if(typeof(element.update) === 'function' && element.loaded == true){
-                element.update(deltaTime);
-            }
-        });
+            if(element.loaded == true){
+                if(typeof(element.update) === 'function'){
+                    element.update(deltaTime);
+                }
 
-        PrototypeChain.gameObjects.forEach(element => {
-            if(typeof(element.animate) === 'function' && element.loaded == true){
-                element.animate(deltaTime);
+                if(typeof(element.animate) === 'function'){
+                    element.animate(deltaTime);
+                }
             }
         });
     }

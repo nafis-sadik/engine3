@@ -32,62 +32,94 @@ export class GameObject{
     }
 
     loadModel = (url) => {
+        // If it's not string, it's not an url
         if (typeof (url) !== 'string') {
             throw Error('expected type string for url');
         }
+
+        // Method for OnLoad event
+        let onLoad = (gltf) => {
+            // Make every part of the models cast shadows
+            gltf.scene.traverse( function( node ) {
+                if (node instanceof THREE.Mesh) {
+                    node.castShadow = true;
+                    node.material.side = THREE.FrontSide;
+                }
+            });
+
+            // Add the mesh to scene. The system shall expect the meshes to be under a scene object
+            this.scene.add(gltf.scene);
+            // gltf.scene is expected to be a THREE.Group. This is a type of Object 3d. Thus, shall be used for Transform properties by other scripts
+            this.mesh = gltf.scene;
+            // Array of THREE.AnimationClip that shall be used for playing and transitioning through different animations
+            this.animations = [];
+            // Creating mixer to create AnimationClip objects for each animations
+            this.mixer = new THREE.AnimationMixer(this.mesh);
+            gltf.animations.forEach((animation) => {{
+                let clipAction = this.mixer.clipAction(animation);
+                this.animations.push(clipAction);
+                clipAction.play();
+                clipAction.weight = 0;
+            }});
+
+            console.log('Animation reference project : https://codepen.io/b29/pen/MPmqLo');
+            console.log('Animation reference project : https://github.com/mrdoob/three.js/blob/master/examples/webgl_animation_skinning_blending.html');
+
+            this.loaded = true;
+
+            // Ensures that the startt function is called form other script file when the file has been loaded successfully
+            if(typeof(this.start) === 'function'){
+                this.start();
+            }
+        }
+
+        // Method for onProgress event
+        let onProgress = (xhr) => {
+            console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+        }
+
+        // Method for onError event
+        let onError = (error) => {
+            console.log('An error happened');
+            console.log(error);
+        }
+
+        // seperate loader based on extenstion
         let urlSplit = url.split('.');
         let extension = urlSplit[urlSplit.length-1].toLowerCase();
         if(extension === 'drc'){
             this.dracoLoad(url);
         }
         else if(extension === 'gltf' || extension === 'glb'){
-            this.gltfLoader(url);
+            this.gltfLoader(url, onLoad, onProgress, onError);
         }
         else{
             throw Error('Extension ' + extension + ' is not supported');
         }
     }
 
-    gltfLoader = (url) => {
+    gltfLoader = (url, onLoad, onProgress, onError) => {
+        if(typeof(onLoad) !== 'function'){
+            console.log('%cExpected function for onLoad event of model gltf loading', 'background: #ff0000; color: #000000; font-weight: 800');
+            return ;
+        }
+        if(typeof(onProgress) !== 'function'){
+            console.log('%cExpected function for onProgress event of model gltf loading', 'background: #ff0000; color: #000000; font-weight: 800');
+            return ;
+        }
+        if(typeof(onError) !== 'function'){
+            console.log('%cExpected function for onError event of model gltf loading', 'background: #ff0000; color: #000000; font-weight: 800');
+            return ;
+        }
         GameObject.gltfLoader.load(
             // resource URL
             url,
             // called when the resource is loaded
-            (gltf) => {
-                // Make every part of the models cast shadows
-                gltf.scene.traverse( function( node ) {
-                    if (node instanceof THREE.Mesh) { 
-                        node.castShadow = true; 
-                        node.material.side = THREE.FrontSide;
-                    }
-                });
-                
-                this.scene.add(gltf.scene);                         // Add the mesh to scene
-                this.mesh = gltf.scene;                             // Cache the mesh to let others access
-                this.animations = gltf.animations;                  // Array<THREE.AnimationClip>
-                
-                this.mixer = new THREE.AnimationMixer(this.mesh);
-                console.log('Animation reference project : https://codepen.io/b29/pen/MPmqLo');
-                
-                gltf.scene; // THREE.Group
-                gltf.scenes; // Array<THREE.Group>
-                gltf.cameras; // Array<THREE.Camera>
-                gltf.asset; // Object
-                this.loaded = true;
-
-                if(typeof(this.start) === 'function'){
-                    this.start();
-                }
-            },
+            onLoad,
             // called while loading is progressing
-            (xhr) => {
-                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-            },
+            onProgress,
             // called when loading has errors
-            (error) => {
-                console.log('An error happened');
-                console.log(error);
-            }
+            onError
         )
     }
 
@@ -125,38 +157,57 @@ export class GameObject{
         );
     }
 
-    playAnimation = (animationClip, fadeIn = false, loop=true) => {
-        if(!animationClip instanceof THREE.AnimationClip){
-            throw Error('expected object of type THREE.AnimationClip for animationClip')
-        }
-
-        if(this.action === undefined)
-            this.action = this.mixer.clipAction(animationClip);
-
-        console.log(this.action.getClip());
-        if (typeof (fadeIn) === 'boolean' && fadeIn === true) {
-            this.action.play().fadeIn(1);
-        } else {
-            this.action.play();
-        }
-
-        this.action.loop = loop;
-        this.action.clampWhenFinished = !loop;
-    }
-
-    stopAnimation = (fadeOut = false) => {
-        if(this.action != undefined){
-            // if(typeof(fadeOut) === 'boolean' && fadeOut === true){
-            //     this.action.fadeOut(1);
-            //     console.log('stop');
-            // }
-            // else{
-            //     this.action.stop();
-            // }
-            this.action.stop();
-            this.action.reset();
-        }
-    }
+    // playAnimation = (animationClip, fadeIn = false, loop=true) => {
+    //     console.log(this.animations[Math.floor(Math.random() * this.animations.length)].weight = 1);
+    //     return ;
+    //     if(!animationClip instanceof THREE.AnimationClip){
+    //         console.log('%cExpected object of type THREE.AnimationClip for animationClip', 'background: #ff0000; color: #000000; font-weight: 800');
+    //         return ;
+    //     }
+    //
+    //     // if(this.action === undefined)
+    //     this.currentAnimation = animationClip;
+    //     this.action = this.mixer.clipAction(animationClip);
+    //
+    //     if (typeof (fadeIn) === 'boolean' && fadeIn === true) {
+    //         this.action.play().fadeIn(1);
+    //     } else {
+    //         this.action.play();
+    //     }
+    //
+    //     this.action.loop = loop;
+    //     this.action.clampWhenFinished = !loop;
+    //
+    //     return this.action.getClip();
+    // }
+    //
+    // stopAnimation = (fadeOut = false) => {
+    //     if(this.action === undefined){
+    //         return;
+    //         // if(typeof(fadeOut) === 'boolean' && fadeOut === true){
+    //         //     this.action.fadeOut(1);
+    //         //     console.log('stop');
+    //         // }
+    //         // else{
+    //         //     this.action.stop();
+    //         // }
+    //         // this.action.fadeOut();
+    //         // this.action.stop();
+    //         // this.action.reset();
+    //         // this.action = undefined;
+    //     }
+    //     if(fadeOut){
+    //         if(this.currentAnimation !== undefined){
+    //             console.log(this.currentAnimation)
+    //             this.currentAnimation.fadeOut();
+    //         }
+    //     }
+    //     else {
+    //         if(this.currentAnimation === undefined){
+    //             this.action.stop(this.currentAnimation);
+    //         }
+    //     }
+    // }
 
     animate = (deltaTime) => {
         this.mixer.update(deltaTime);
