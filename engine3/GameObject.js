@@ -1,12 +1,14 @@
 import * as THREE from 'three';
-import { AnimationClip } from 'three';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import {Object3D} from "three";
 
 export class GameObject{
     // Instantiate a loader
     static dracoLoader = new DRACOLoader();
     static gltfLoader = new GLTFLoader();
+    start;
+    update;
 
     constructor(name, scene, layer = 'default') {
         // Naming each game object to identify uniquely
@@ -53,7 +55,7 @@ export class GameObject{
             this.mesh = gltf.scene;
             // Array of THREE.AnimationClip that shall be used for playing and transitioning through different animations
             this.animations = [];
-            // Creating mixer to create AnimationClip objects for each animations
+            // Creating mixer to create AnimationClip objects for each animation
             this.mixer = new THREE.AnimationMixer(this.mesh);
             gltf.animations.forEach((animation) => {{
                 let clipAction = this.mixer.clipAction(animation);
@@ -67,7 +69,7 @@ export class GameObject{
 
             this.loaded = true;
 
-            // Ensures that the startt function is called form other script file when the file has been loaded successfully
+            // Ensures that the start function is called form other script file when the file has been loaded successfully
             if(typeof(this.start) === 'function'){
                 this.start();
             }
@@ -157,57 +159,12 @@ export class GameObject{
         );
     }
 
-    // playAnimation = (animationClip, fadeIn = false, loop=true) => {
-    //     console.log(this.animations[Math.floor(Math.random() * this.animations.length)].weight = 1);
-    //     return ;
-    //     if(!animationClip instanceof THREE.AnimationClip){
-    //         console.log('%cExpected object of type THREE.AnimationClip for animationClip', 'background: #ff0000; color: #000000; font-weight: 800');
-    //         return ;
-    //     }
-    //
-    //     // if(this.action === undefined)
-    //     this.currentAnimation = animationClip;
-    //     this.action = this.mixer.clipAction(animationClip);
-    //
-    //     if (typeof (fadeIn) === 'boolean' && fadeIn === true) {
-    //         this.action.play().fadeIn(1);
-    //     } else {
-    //         this.action.play();
-    //     }
-    //
-    //     this.action.loop = loop;
-    //     this.action.clampWhenFinished = !loop;
-    //
-    //     return this.action.getClip();
-    // }
-    //
-    // stopAnimation = (fadeOut = false) => {
-    //     if(this.action === undefined){
-    //         return;
-    //         // if(typeof(fadeOut) === 'boolean' && fadeOut === true){
-    //         //     this.action.fadeOut(1);
-    //         //     console.log('stop');
-    //         // }
-    //         // else{
-    //         //     this.action.stop();
-    //         // }
-    //         // this.action.fadeOut();
-    //         // this.action.stop();
-    //         // this.action.reset();
-    //         // this.action = undefined;
-    //     }
-    //     if(fadeOut){
-    //         if(this.currentAnimation !== undefined){
-    //             console.log(this.currentAnimation)
-    //             this.currentAnimation.fadeOut();
-    //         }
-    //     }
-    //     else {
-    //         if(this.currentAnimation === undefined){
-    //             this.action.stop(this.currentAnimation);
-    //         }
-    //     }
-    // }
+    rotate = (vector3) => {
+        if(typeof (vector3) !== 'Vector3')
+            console.log(`%cExpected value of type Vector3', 'background: #ff0000; color: #000000; font-weight: 800`);
+
+        this.mesh.rotation += vector3;
+    }
 
     animate = (deltaTime) => {
         this.mixer.update(deltaTime);

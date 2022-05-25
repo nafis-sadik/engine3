@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { ObjectFactory } from './ObjectFactory'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import {InputManager} from "./InputManager";
 
 export default class Program{
     // Only rendering shall start when the application has been created
@@ -33,7 +34,7 @@ export default class Program{
         this.mainCam.position.setZ(5);
         this.clock = new THREE.Clock();
 
-        if(skyboxUrls != undefined){
+        if(skyboxUrls !== undefined){
             const textureCube = new THREE.CubeTextureLoader().load( skyboxUrls );
             textureCube.encoding = THREE.sRGBEncoding;
             this.currentScene.background = textureCube;
@@ -72,9 +73,15 @@ export default class Program{
         this.renderer.render(this.currentScene, this.mainCam);
         requestAnimationFrame(this.gameLoop);
         let deltaTime = this.clock.getDelta();
+
+        InputManager.InputCollection.forEach(element => {
+            if(typeof(element.update) === 'function'){
+                element.update();
+            }
+        });
         
         ObjectFactory.gameObjects.forEach(element => {
-            if(element.loaded == true){
+            if(element.loaded === true){
                 if(typeof(element.update) === 'function'){
                     element.update(deltaTime);
                 }

@@ -1,4 +1,8 @@
 export class InputManager{
+    // A collection of all virtual inputs to call update method on each frame
+    static InputCollection = [];
+    keyUpFlag;
+
     constructor(name, positiveKey, negativeKey, gravity=1, max=1, min=-1) {
         this.gravity = gravity;
         this.min = min;
@@ -7,10 +11,11 @@ export class InputManager{
         this.positiveKey = positiveKey;
         this.negativeKey = negativeKey;
         this.value = 0;
+        InputManager.InputCollection.push(this);
 
         // Key Binding
         document.addEventListener('keypress', (event) => {
-            if (event.key == this.positiveKey) {
+            if (event.key === this.positiveKey) {
                 let temp = this.value;
                 temp += this.gravity;
                 if (temp >= this.max)
@@ -18,7 +23,7 @@ export class InputManager{
                 else
                     this.value = temp;
             }
-            if (event.key == this.negativeKey) {
+            if (event.key === this.negativeKey) {
                 let temp = this.value;
                 temp -= this.gravity;
                 if (temp <= this.min)
@@ -29,22 +34,30 @@ export class InputManager{
         })
 
         document.addEventListener('keyup', (event) => {
-            if (this.value != 0) {
-                let temp = this.value;
-                if (temp > 0) {
-                    temp -= this.gravity;
-                    if (temp <= 0)
-                        this.value = 0;
-                    else
-                        this.value = temp;
-                } else {
-                    temp += this.gravity;
-                    if (temp >= 0)
-                        this.value = 0;
-                    else
-                        this.value = temp;
-                }
+            if (event.key === this.positiveKey || event.key === this.negativeKey) {
+                this.keyUpFlag = true;
             }
         })
+    }
+
+    update = () => {
+        if(this.keyUpFlag){
+            let temp = this.value;
+            if (temp > 0) {
+                temp -= this.gravity;
+                if (temp <= 0)
+                    this.value = 0;
+                else
+                    this.value = temp;
+            } else if(temp < 0) {
+                temp += this.gravity;
+                if (temp >= 0)
+                    this.value = 0;
+                else
+                    this.value = temp;
+            } else {
+                this.keyUpFlag = false;
+            }
+        }
     }
 }
