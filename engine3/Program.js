@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { PrototypeChain } from './PrototypeChain'
+import { ObjectFactory } from './ObjectFactory'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 export default class Program{
@@ -23,7 +23,7 @@ export default class Program{
         }
 
         this.currentScene = scene;
-        PrototypeChain.scene = scene;
+        this.objectFactory = new ObjectFactory(scene);
         this.mainCam = camera;
 
         this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -72,8 +72,8 @@ export default class Program{
         this.renderer.render(this.currentScene, this.mainCam);
         requestAnimationFrame(this.gameLoop);
         let deltaTime = this.clock.getDelta();
-
-        PrototypeChain.gameObjects.forEach(element => {
+        
+        ObjectFactory.gameObjects.forEach(element => {
             if(element.loaded == true){
                 if(typeof(element.update) === 'function'){
                     element.update(deltaTime);

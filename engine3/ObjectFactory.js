@@ -1,10 +1,11 @@
 import { GameObject } from "./GameObject";
 
-export class PrototypeChain {
-    static gameObjects = []
+export class ObjectFactory {
+    static gameObjects;
 
     constructor(currentScene) {
-        PrototypeChain.scene = currentScene;
+        ObjectFactory.scene = currentScene;
+        ObjectFactory.gameObjects = [];
     }
 
     static createScript = (objectName) => {
@@ -12,8 +13,8 @@ export class PrototypeChain {
             new Error('string data expected');
         }
         
-        let entity = new GameObject(objectName, PrototypeChain.scene);
-        PrototypeChain.gameObjects.push(entity);
+        let entity = new GameObject(objectName, ObjectFactory.scene);
+        ObjectFactory.gameObjects.push(entity);
         return entity;
     }
 }

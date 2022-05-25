@@ -1,25 +1,16 @@
-import {PrototypeChain} from "../engine3/PrototypeChain";
+import { ObjectFactory } from "../engine3/ObjectFactory";
+import { InputManager } from "../engine3/InputManager";
 import {color} from "three/examples/jsm/nodes/ShaderNode";
 
-const Bunny = PrototypeChain.createScript('Bunny');
+const Bunny = ObjectFactory.createScript('Bunny');
 // Bunny.loadModel('./../assets/bunny.drc');
 // Bunny.loadModel('https://raw.githubusercontent.com/baronwatts/models/master/robber.glb');
 Bunny.loadModel('./../assets/Soldier.glb');
 
-class InputManager {
-    constructor() {
-        document.addEventListener('keypress', (event) => {
-            if(event.key === 'w'){
-                console.log('w')
-            }
-        })
-    }
-}
-
 Bunny.start = () => {
     Bunny.mesh.scale.set(1, 1, 1);
     Bunny.animations[0].weight = 1;
-    new InputManager()
+    Bunny.horizontal = new InputManager('horizontal', 'w', 's', 0.01);
     // Bind animations with keys
     // document.body.addEventListener("keypress", (e) => {
     //     if(Bunny.animations.length <= 0){
@@ -44,8 +35,13 @@ Bunny.update = (deltaTime) => {
     i += 0.01;
     // Bunny.mesh.position.set(5 * Math.sin(i), 0, 0);
     let scaleY = Math.sin(i);
-    if(scaleY < 0) { scaleY = -1 * scaleY; }
-    Bunny.mesh.rotation.y = Bunny.mesh.rotation.y + (2 * deltaTime);
+    if (scaleY < 0) { scaleY = -1 * scaleY; }
+    Bunny.mesh.rotation.y = scaleY;
+    // Bunny.mesh.rotation.y = 360 * Bunny.horizontal.value;
+    console.log(Bunny.animations[0].weight)
+    Bunny.animations[0].weight = Bunny.horizontal.value * -1;
+    Bunny.animations[1].weight = Bunny.horizontal.value;
+    // Bunny.mesh.rotation.y = Bunny.mesh.rotation.y + (2 * deltaTime);
     // Bunny.mesh.position.z = Bunny.mesh.position.z + (-2 * deltaTime);
     // Bunny.mesh.scale.set(5 * Math.sin(i), 5 * scaleY, 5 * Math.sin(i));
     // Bunny.mesh.rotateY(0.1);
