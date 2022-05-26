@@ -10,7 +10,7 @@ Bunny.loadModel('./../assets/Soldier.glb');
 Bunny.start = () => {
     Bunny.mesh.scale.set(1, 1, 1);
     Bunny.animations[0].weight = 1;
-    Bunny.horizontal = new InputManager('horizontal', 'a', 'd', 0.01);
+    Bunny.horizontal = new InputManager('horizontal', 'a', 'd', 1);
     Bunny.vertical = new InputManager('vertical', 'w', 's', 0.01);
 
     document.addEventListener('keypress', (event) => {
@@ -28,13 +28,8 @@ Bunny.update = (deltaTime) => {
     }
     Bunny.animations[0].weight = idleAnimationWeight;
     Bunny.animations[1].weight = Bunny.vertical.value;
+    console.log(Bunny.vertical.value);
 
-    let rotationSpeed = 0.01;
-    // Bunny.mesh.rotation.y += rotationSpeed;
-    console.log(Bunny.mesh.rotation.y);
-    // console.log(new THREE.Vector3(0, Bunny.horizontal.value * rotationSpeed * deltaTime, 0));
-    // Bunny.mesh.rotation.set(new THREE.Vector3( 0, Bunny.horizontal.value *  rotationSpeed * deltaTime, 0));
-    // Bunny.mesh.rotation.set(new THREE.Vector3( 0, 0, Math.PI / 2));
-    // console.log(Bunny.mesh.rotation);
-    // Bunny.rotate(new THREE.Vector3(0, Bunny.horizontal.value * rotationSpeed * deltaTime, 0));
+    let rotationSpeed = 2;
+    Bunny.mesh.rotation.y += rotationSpeed * Math.ceil(Bunny.horizontal.value) * deltaTime;
 }

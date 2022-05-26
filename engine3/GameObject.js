@@ -158,17 +158,6 @@ export class GameObject{
         );
     }
 
-    rotate = (vector3) => {
-        console.log(vector3);
-        console.log(typeof (vector3));
-        if(vector3 instanceof THREE.Vector3)
-            console.log(`%cExpected value of type Vector3', 'background: #ff0000; color: #000000; font-weight: 800`);
-
-        this.mesh.rotation.x += vector3.x;
-        this.mesh.rotation.y += vector3.y;
-        this.mesh.rotation.z += vector3.z;
-    }
-
     animate = (deltaTime) => {
         this.mixer.update(deltaTime);
     }
