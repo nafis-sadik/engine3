@@ -1,7 +1,9 @@
 export class InputManager{
     // A collection of all virtual inputs to call update method on each frame
     static InputCollection = [];
-    keyUpFlag;
+    keyUpFlag = false;
+    keyDownFlagP = false;
+    keyDownFlagN = false;
 
     constructor(name, positiveKey, negativeKey, gravity=1, max=1, min=-1) {
         this.gravity = gravity;
@@ -16,25 +18,20 @@ export class InputManager{
         // Key Binding
         document.addEventListener('keypress', (event) => {
             if (event.key === this.positiveKey) {
-                let temp = this.value;
-                temp += this.gravity;
-                if (temp >= this.max)
-                    this.value = this.max;
-                else
-                    this.value = temp;
+                this.keyDownFlagP = true;
+                this.keyUpFlag = false;
             }
+
             if (event.key === this.negativeKey) {
-                let temp = this.value;
-                temp -= this.gravity;
-                if (temp <= this.min)
-                    this.value = this.min;
-                else
-                    this.value = temp;
+                this.keyDownFlagN = true;
+                this.keyUpFlag = false;
             }
         })
 
         document.addEventListener('keyup', (event) => {
             if (event.key === this.positiveKey || event.key === this.negativeKey) {
+                this.keyDownFlagP = false;
+                this.keyDownFlagN = false;
                 this.keyUpFlag = true;
             }
         })
@@ -58,6 +55,24 @@ export class InputManager{
             } else {
                 this.keyUpFlag = false;
             }
+        }
+
+        if(this.keyDownFlagP) {
+            let temp = this.value;
+            temp += this.gravity;
+            if (temp >= this.max)
+                this.value = this.max;
+            else
+                this.value = temp;
+        }
+
+        if(this.keyDownFlagN){
+            let temp = this.value;
+            temp -= this.gravity;
+            if (temp <= this.min)
+                this.value = this.min;
+            else
+                this.value = temp;
         }
     }
 }
