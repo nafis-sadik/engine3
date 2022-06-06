@@ -18,9 +18,13 @@ Bunny.start = () => {
             Bunny.mesh.rotation.set(new THREE.Euler( 0, 1, 1.57, 'XYZ'));
             console.log(Bunny.mesh.rotation);
         }
-    })
+    });
+
+    console.log('Bunny UUID: ', Bunny.mesh.uuid);
 }
 
+let rotationSpeed = 2;
+let movementSpeed = 50;
 Bunny.update = (deltaTime) => {
     let idleAnimationWeight = 1 - Bunny.vertical.value;
     if(idleAnimationWeight > 1){
@@ -28,8 +32,11 @@ Bunny.update = (deltaTime) => {
     }
     Bunny.animations[0].weight = idleAnimationWeight;
     Bunny.animations[1].weight = Bunny.vertical.value;
-    console.log(Bunny.vertical.value);
 
-    let rotationSpeed = 2;
-    Bunny.mesh.rotation.y += rotationSpeed * Math.ceil(Bunny.horizontal.value) * deltaTime;
+    // Bunny.mesh.rotation.y += rotationSpeed * Math.ceil(Bunny.vertical.value) * deltaTime;
+    
+    let positionZ = Bunny.mesh.position.x + movementSpeed * Bunny.vertical.value * deltaTime;
+    // Bunny.mesh.position.set(o, 0, movementSpeed * positionZ);
+    Bunny.mesh.translateZ(positionZ);
+    console.log('Current Position: ', Bunny.mesh.position)
 }

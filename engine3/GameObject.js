@@ -44,6 +44,7 @@ export class GameObject{
             gltf.scene.traverse( function( node ) {
                 if (node instanceof THREE.Mesh) {
                     node.castShadow = true;
+                    node.receiveShadow = true;
                     node.material.side = THREE.FrontSide;
                 }
             });
@@ -51,7 +52,9 @@ export class GameObject{
             // Add the mesh to scene. The system shall expect the meshes to be under a scene object
             this.scene.add(gltf.scene);
             // gltf.scene is expected to be a THREE.Group. This is a type of Object 3d. Thus, shall be used for Transform properties by other scripts
-            this.mesh = gltf.scene;
+            this.mesh = gltf.scene.children[0];
+            this.mesh.receiveShadow = true;
+            this.mesh.castShadow = true;
             // Array of THREE.AnimationClip that shall be used for playing and transitioning through different animations
             this.animations = [];
             // Creating mixer to create AnimationClip objects for each animation

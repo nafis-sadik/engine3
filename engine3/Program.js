@@ -4,6 +4,10 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import {InputManager} from "./InputManager";
 
 export default class Program{
+    // FPS Counter
+    static FPSCounter = 0;
+    timeCounter = 0;
+
     // Only rendering shall start when the application has been created
     constructor() {
         this.renderer = new THREE.WebGLRenderer({
@@ -31,7 +35,9 @@ export default class Program{
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.renderer.shadowMap.enabled = true;
-        this.mainCam.position.setZ(5);
+        this.mainCam.position.setX(500);
+        this.mainCam.position.setY(500);
+        this.mainCam.position.setZ(500);
         this.clock = new THREE.Clock();
 
         if(skyboxUrls !== undefined){
@@ -43,9 +49,7 @@ export default class Program{
 
         if(useOrbitControls){
             const controls = new OrbitControls(this.mainCam, this.renderer.domElement);
-            // controls.update() must be called after any manual changes to the camera's transform
-            // camera.position.set( 0, 20, 100 );
-            controls.update();
+            controls.update() // must be called after any manual changes to the camera's transform
         }
 
         const light1 = new THREE.DirectionalLight(0xefefff, 3);
@@ -59,7 +63,7 @@ export default class Program{
 
         this.renderer.render(scene, camera);
 
-        this.gameLoop();
+        this.gameLoop(camera);
     }
 
     // making system responsive
@@ -73,6 +77,15 @@ export default class Program{
         this.renderer.render(this.currentScene, this.mainCam);
         requestAnimationFrame(this.gameLoop);
         let deltaTime = this.clock.getDelta();
+
+        // FPS Counting
+        Program.FPSCounter++;
+        this.timeCounter += deltaTime;
+        if(this.timeCounter >= 1){
+            console.log('FPS : ', Program.FPSCounter);
+            this.timeCounter = 0;
+            Program.FPSCounter = 0;
+        }
 
         InputManager.InputCollection.forEach(element => {
             if(typeof(element.update) === 'function'){
